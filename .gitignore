@@ -1,0 +1,17 @@
+﻿# Compilados Java
+*.class
+out/
+*.jar
+
+# Dados gerados nos experimentos
+results/data/
+*.sst
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
