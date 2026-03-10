@@ -60,5 +60,43 @@ public class Main {
         for (String[] entry : all) {
             System.out.println(entry[0] + " → " + entry[1]);
         }
+
+        System.out.println("\n=== Teste LSMTree ===");
+
+        // MemTable com limite de 3 entradas para forçar flushes rápido
+        LSMTree lsm = new LSMTree(3, "results");
+
+        // Insere 14 entradas (vai forçar vários flushes e uma compaction)
+        lsm.insert("user_001", 10);
+        lsm.insert("user_002", 20);
+        lsm.insert("user_003", 30);
+        lsm.insert("user_004", 40);
+        lsm.insert("user_005", 50);
+        lsm.insert("user_006", 60);
+        lsm.insert("user_007", 70);
+        lsm.insert("user_008", 80);
+        lsm.insert("user_009", 90);
+        lsm.insert("user_010", 100);
+        lsm.insert("user_011", 110);
+        lsm.insert("user_012", 120);
+        lsm.insert("user_013", 130);
+        lsm.insert("user_014", 140);
+        lsm.close();
+
+        // Buscas
+        System.out.println("\n=== Buscas na LSMTree ===");
+        System.out.println("get(user_001) → esperado: 10  | resultado: " + lsm.get("user_001"));
+        System.out.println("get(user_007) → esperado: 70  | resultado: " + lsm.get("user_007"));
+        System.out.println("get(user_014) → esperado: 140 | resultado: " + lsm.get("user_014"));
+        System.out.println("get(user_999) → esperado: null| resultado: " + lsm.get("user_999"));
+
+        // Métricas
+        System.out.println("\n=== Métricas ===");
+        System.out.println("Compactions realizadas : " + lsm.getCompactionCount());
+        System.out.println("SSTables em L0         : " + lsm.getSSTCountAtLevel(0));
+        System.out.println("SSTables em L1         : " + lsm.getSSTCountAtLevel(1));
+        System.out.println("Entradas na MemTable   : " + lsm.getMemTableSize());
+
     }
+
 }
