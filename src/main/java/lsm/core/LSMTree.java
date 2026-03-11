@@ -5,14 +5,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class LSMTree {
 
-    //Configurações
+    // Configurações
     private static final int MAX_TABLES_PER_LEVEL = 4;
     private static final int MAX_LEVELS = 5;
 
-    //Estado
+    // Estado
     private final MemTable memTable;
     private final List<List<SSTable>> levels;
     private final String dataDir;
@@ -20,19 +19,21 @@ public class LSMTree {
     private long flushCounter = 0;
     private int compactionCount = 0;
 
-    //Construtor
-    public LSMTree(int memTableMaxSize, String dataDir) throws IOException {
+    private final MetricsLogger metricsLogger;
+
+    // Construtor
+    public LSMTree(int memTableMaxSize, String dataDir, MetricsLogger metricsLogger) throws IOException {
         this.memTable = new MemTable(memTableMaxSize);
         this.dataDir = dataDir;
+        this.metricsLogger = metricsLogger;
         this.levels = new ArrayList<>();
 
-        // Inicializa as listas de cada nível
         for (int i = 0; i < MAX_LEVELS; i++) {
             levels.add(new ArrayList<>());
         }
     }
 
-    //Insert
+    // Insert
     public void insert(String key, int value) throws IOException {
         memTable.insert(key, value);
 
@@ -41,7 +42,7 @@ public class LSMTree {
         }
     }
 
-    //Get 
+    // Get
     public Integer get(String key) throws IOException {
 
         // 1. Verifica MemTable primeiro (mais recente)
@@ -58,11 +59,12 @@ public class LSMTree {
             }
         }
 
-        return null; //não encontrado
+        return null; // não encontrado
     }
 
-    //Flush
+    // Flush
     public void flush() throws IOException {
+        
         if (memTable.isEmpty())
             return;
 
@@ -79,6 +81,8 @@ public class LSMTree {
         levels.get(0).add(sst);
         memTable.clear();
 
+        metricsLogger.recordFlush();
+
         System.out.println("[flush] SSTable criada: " + sst.getFilePath());
 
         // Verifica se L0 precisa de compaction
@@ -87,7 +91,7 @@ public class LSMTree {
         }
     }
 
-    //Compact
+    // Compact
     public void compact(int level) throws IOException {
         if (level >= MAX_LEVELS - 1)
             return;
@@ -133,6 +137,8 @@ public class LSMTree {
         levels.get(nextLevel).add(compacted);
 
         compactionCount++;
+        metricsLogger.recordCompaction();
+
         System.out.println("[compact] Concluída! SSTables em L" + nextLevel + ": "
                 + levels.get(nextLevel).size());
 
@@ -142,15 +148,15 @@ public class LSMTree {
         }
     }
 
-    //Fechar
-    //Garante que dados ainda na MemTable sejam salvos
+    // Fechar
+    // Garante que dados ainda na MemTable sejam salvos
     public void close() throws IOException {
         if (!memTable.isEmpty()) {
             flush();
         }
     }
 
-    //Getters de métricas
+    // Getters de métricas
     public int getCompactionCount() {
         return compactionCount;
     }
