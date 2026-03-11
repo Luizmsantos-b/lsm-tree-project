@@ -1,4 +1,4 @@
-package main.java.lsm.core;
+package lsm.util;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -5,6 +5,8 @@ package main.java.lsm.core;
 import java.nio.file.Paths;
 import java.util.List;
 
+import main.java.lsm.util.*;
+
 public class Main {
 
     public static void main(String[] args) throws Exception {
@@ -64,7 +66,8 @@ public class Main {
         System.out.println("\n=== Teste LSMTree ===");
 
         // MemTable com limite de 3 entradas para forçar flushes rápido
-        LSMTree lsm = new LSMTree(3, "results");
+        MetricsLogger loggerOld = new MetricsLogger("teste_antigo", "results/metrics/teste_antigo.json");
+        LSMTree lsm = new LSMTree(3, "results", loggerOld);
 
         // Insere 14 entradas (vai forçar vários flushes e uma compaction)
         lsm.insert("user_001", 10);
@@ -96,6 +99,46 @@ public class Main {
         System.out.println("SSTables em L0         : " + lsm.getSSTCountAtLevel(0));
         System.out.println("SSTables em L1         : " + lsm.getSSTCountAtLevel(1));
         System.out.println("Entradas na MemTable   : " + lsm.getMemTableSize());
+
+        System.out.println("\n=== Teste MetricsLogger + LSMTree ===");
+
+        MetricsLogger logger = new MetricsLogger("teste", "results/metrics/teste.json");
+        LSMTree lsm2 = new LSMTree(3, "results", logger);
+
+        // Fase de inserção
+        logger.startInsert();
+        lsm2.insert("user_001", 10);
+        lsm2.insert("user_002", 20);
+        lsm2.insert("user_003", 30);
+        lsm2.insert("user_004", 40);
+        lsm2.insert("user_005", 50);
+        lsm2.insert("user_006", 60);
+        lsm2.insert("user_007", 70);
+        lsm2.insert("user_008", 80);
+        lsm2.insert("user_009", 90);
+        lsm2.insert("user_010", 100);
+        lsm2.close();
+        logger.endInsert(10);
+
+        // Fase de busca
+        logger.startSearch();
+        String[] keys = { "user_001", "user_005", "user_010", "user_999" };
+        for (String key : keys) {
+            long t0 = System.nanoTime();
+            Integer value = lsm2.get(key);
+            long latencyUs = (System.nanoTime() - t0) / 1000;
+            logger.recordSearch(value != null, latencyUs);
+            System.out.println("get(" + key + ") → " + value);
+        }
+        logger.endSearch();
+
+        // Salva JSON
+        logger.save();
+
+        // Métricas
+        System.out.println("\n=== Métricas ===");
+        System.out.println("Flushes     : " + logger.getFlushCount());
+        System.out.println("Compactions : " + logger.getCompactionCount());
 
     }
 
