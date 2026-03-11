@@ -6,7 +6,7 @@ contra arvores balanceadas tradicionais em 3 cenarios de carga.
 ## Equipe
 - Luiz Marcelo
 - Luizmar 
-- Felipe 
+- Filipe 
 
 ## Tecnologias
 - Java 21
