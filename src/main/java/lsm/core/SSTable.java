@@ -1,4 +1,4 @@
-package main.java.lsm.core;
+package lsm.core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -86,6 +86,4 @@ public class SSTable {
         return timestamp;
     }
 }
-
-
 

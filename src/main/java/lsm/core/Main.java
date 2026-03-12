@@ -1,11 +1,11 @@
-package main.java.lsm.core;
+package lsm.core;
 
 //import main.java.lsm.core.MemTable;
 //import main.java.lsm.core.SSTable;
 import java.nio.file.Paths;
 import java.util.List;
 
-import main.java.lsm.util.*;
+import lsm.util.*;
 
 public class Main {
 

@@ -1,4 +1,4 @@
-package main.java.lsm.core;
+package lsm.core;
 
 public class Node {
 

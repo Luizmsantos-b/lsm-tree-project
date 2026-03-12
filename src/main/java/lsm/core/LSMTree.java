@@ -1,9 +1,11 @@
-package main.java.lsm.core;
+package lsm.core;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import lsm.util.MetricsLogger;
 
 public class LSMTree {
 

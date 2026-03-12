@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MetricsLogger {
 
@@ -82,24 +83,24 @@ public class MetricsLogger {
 
         Files.createDirectories(Paths.get(outputPath).getParent());
 
-        String json = "{\n" +
-                "  \"scenario\": \"" + scenario + "\",\n" +
-                "  \"timestamp\": \"" + Instant.now() + "\",\n" +
-                "  \"insert_total_ms\": " + insertTotalMs + ",\n" +
-                "  \"insert_throughput_ops_sec\": " + String.format("%.2f", insertThroughput) + ",\n" +
-                "  \"keys_inserted\": " + keysInserted + ",\n" +
-                "  \"search_total_ms\": " + searchTotalMs + ",\n" +
-                "  \"search_avg_us\": " + String.format("%.4f", searchAvgUs) + ",\n" +
-                "  \"search_p99_us\": " + String.format("%.4f", searchP99Us) + ",\n" +
-                "  \"search_hits\": " + searchHits + ",\n" +
-                "  \"search_total\": " + searchTotal + ",\n" +
-                "  \"search_hit_rate\": " + String.format("%.4f", searchTotal > 0
+        String json = "{\n"
+                + "  \"scenario\": \"" + scenario + "\",\n"
+                + "  \"timestamp\": \"" + Instant.now() + "\",\n"
+                + "  \"insert_total_ms\": " + insertTotalMs + ",\n"
+                + "  \"insert_throughput_ops_sec\": " + String.format(Locale.US, "%.2f", insertThroughput) + ",\n"
+                + "  \"keys_inserted\": " + keysInserted + ",\n"
+                + "  \"search_total_ms\": " + searchTotalMs + ",\n"
+                + "  \"search_avg_us\": " + String.format(Locale.US, "%.4f", searchAvgUs) + ",\n"
+                + "  \"search_p99_us\": " + String.format(Locale.US, "%.4f", searchP99Us) + ",\n"
+                + "  \"search_hits\": " + searchHits + ",\n"
+                + "  \"search_total\": " + searchTotal + ",\n"
+                + "  \"search_hit_rate\": " + String.format(Locale.US, "%.4f", searchTotal > 0
                         ? (double) searchHits / searchTotal
                         : 0)
-                + ",\n" +
-                "  \"compaction_count\": " + compactionCount + ",\n" +
-                "  \"flush_count\": " + flushCount + "\n" +
-                "}\n";
+                + ",\n"
+                + "  \"compaction_count\": " + compactionCount + ",\n"
+                + "  \"flush_count\": " + flushCount + "\n"
+                + "}\n";
 
         Files.writeString(Paths.get(outputPath), json);
         System.out.println("[MetricsLogger] Salvo em: " + outputPath);
@@ -120,6 +121,14 @@ public class MetricsLogger {
 
     public int getCompactionCount() {
         return compactionCount;
+    }
+
+    public long getSearchHits() {
+        return searchHits;
+    }
+
+    public long getSearchTotal() {
+        return searchTotal;
     }
 
 }
