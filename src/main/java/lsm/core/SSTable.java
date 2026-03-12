@@ -42,8 +42,8 @@ public class SSTable {
         try (BufferedReader reader = Files.newBufferedReader(filePath)) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("=");
-                if (parts[0].equals(key)) {
+                String[] parts = line.split("=", 2);
+                if (parts.length == 2 && parts[0].equals(key)) {
                     return Integer.parseInt(parts[1]);
                 }
             }
@@ -61,8 +61,10 @@ public class SSTable {
         try (BufferedReader reader = Files.newBufferedReader(filePath)) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("=");
-                result.add(new String[] { parts[0], parts[1] });
+                String[] parts = line.split("=", 2);
+                if (parts.length == 2) {
+                    result.add(new String[] { parts[0], parts[1] });
+                }
             }
         }
         return result;

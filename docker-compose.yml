@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: docker/Dockerfile.java
     container_name: lsm-write-heavy
-    mem_limit: 128m
-    memswap_limit: 128m
+    mem_limit: 512m
+    memswap_limit: 512m
     volumes:
       - ./results:/app/results
     environment:
@@ -21,14 +21,14 @@ services:
       context: .
       dockerfile: docker/Dockerfile.java
     container_name: lsm-balanced
-    mem_limit: 192m
-    memswap_limit: 192m
+    mem_limit: 512m
+    memswap_limit: 512m
     volumes:
       - ./results:/app/results
     environment:
       - SCENARIO=balanced
       - MEMTABLE_SIZE_MB=32
-      - NUM_KEYS=500000
+      - NUM_KEYS=250000
     profiles: ['experiments']
 
   lsm-read-heavy:
@@ -36,14 +36,14 @@ services:
       context: .
       dockerfile: docker/Dockerfile.java
     container_name: lsm-read-heavy
-    mem_limit: 256m
-    memswap_limit: 256m
+    mem_limit: 512m
+    memswap_limit: 512m
     volumes:
       - ./results:/app/results
     environment:
       - SCENARIO=read_heavy
       - MEMTABLE_SIZE_MB=48
-      - NUM_KEYS=500000
+      - NUM_KEYS=50000
     profiles: ['experiments']
 
   analysis:

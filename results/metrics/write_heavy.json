@@ -1,0 +1,15 @@
+{
+  "scenario": "write_heavy",
+  "timestamp": "2026-03-12T23:10:57.353812543Z",
+  "insert_total_ms": 7948,
+  "insert_throughput_ops_sec": 62908.91,
+  "keys_inserted": 500000,
+  "search_total_ms": 42275,
+  "search_avg_us": 843.0065,
+  "search_p99_us": 1172.0000,
+  "search_hits": 298,
+  "search_total": 50000,
+  "search_hit_rate": 0.0060,
+  "compaction_count": 125,
+  "flush_count": 500
+}
