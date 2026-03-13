@@ -1,15 +1,15 @@
 {
   "scenario": "balanced",
-  "timestamp": "2026-03-12T01:51:03.792554791Z",
-  "insert_total_ms": 835,
-  "insert_throughput_ops_sec": 11976.05,
-  "keys_inserted": 10000,
-  "search_total_ms": 6367,
-  "search_avg_us": 631.8970,
-  "search_p99_us": 2980.0000,
-  "search_hits": 4192,
-  "search_total": 10000,
-  "search_hit_rate": 0.4192,
-  "compaction_count": 2,
-  "flush_count": 10
+  "timestamp": "2026-03-13T03:58:58.048125722Z",
+  "insert_total_ms": 4133,
+  "insert_throughput_ops_sec": 60488.75,
+  "keys_inserted": 250000,
+  "search_total_ms": 28181,
+  "search_avg_us": 110.7586,
+  "search_p99_us": 304.0000,
+  "search_hits": 175000,
+  "search_total": 250000,
+  "search_hit_rate": 0.7000,
+  "compaction_count": 15,
+  "flush_count": 63
 }

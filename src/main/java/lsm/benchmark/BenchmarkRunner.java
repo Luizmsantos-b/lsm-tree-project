@@ -1,8 +1,8 @@
 package lsm.benchmark;
 
+import java.util.Random;
 import lsm.core.LSMTree;
-import lsm.util.MetricsLogger;
-import java.util.Random;    
+import lsm.util.MetricsLogger;    
 
 public class BenchmarkRunner {
 
@@ -23,21 +23,17 @@ public class BenchmarkRunner {
         MetricsLogger logger = new MetricsLogger(scenario, metricsPath);
 
         // ── Cria LSMTree ─────────────────────────────────────
-        LSMTree lsm = new LSMTree(memTableSize, "results/data", logger);
+        // Diretório isolado por cenário para evitar race condition entre containers paralelos
+        String dataDir = "results/data/" + scenario;
+        LSMTree lsm = new LSMTree(memTableSize, dataDir, logger);
 
         // ── Define buscas por cenário ────────────────────────
         int numSearches;
-        switch (scenario) {
-            case "write_heavy":
-                numSearches = numKeys / 10;
-                break;
-            case "read_heavy":
-                numSearches = numKeys * 10;
-                break;
-            default:
-                numSearches = numKeys;
-                break;
-        }
+        numSearches = switch (scenario) {
+            case "write_heavy" -> numKeys / 10;
+            case "read_heavy" -> numKeys * 10;
+            default -> numKeys;
+        };
 
         // ── Fase 1: Inserção ─────────────────────────────────
         System.out.println("\n[Fase 1] Inserindo " + numKeys + " chaves...");
