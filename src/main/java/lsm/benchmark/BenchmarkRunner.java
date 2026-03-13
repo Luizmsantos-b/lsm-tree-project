@@ -23,7 +23,9 @@ public class BenchmarkRunner {
         MetricsLogger logger = new MetricsLogger(scenario, metricsPath);
 
         // ── Cria LSMTree ─────────────────────────────────────
-        LSMTree lsm = new LSMTree(memTableSize, "results/data", logger);
+        // Diretório isolado por cenário para evitar race condition entre containers paralelos
+        String dataDir = "results/data/" + scenario;
+        LSMTree lsm = new LSMTree(memTableSize, dataDir, logger);
 
         // ── Define buscas por cenário ────────────────────────
         int numSearches;

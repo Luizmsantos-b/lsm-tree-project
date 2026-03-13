@@ -12,7 +12,7 @@ services:
       - ./results:/app/results
     environment:
       - SCENARIO=write_heavy
-      - MEMTABLE_SIZE_MB=16
+      - MEMTABLE_SIZE=4000
       - NUM_KEYS=500000
     profiles: ['experiments']
 
@@ -27,7 +27,7 @@ services:
       - ./results:/app/results
     environment:
       - SCENARIO=balanced
-      - MEMTABLE_SIZE_MB=32
+      - MEMTABLE_SIZE=4000
       - NUM_KEYS=250000
     profiles: ['experiments']
 
@@ -42,7 +42,7 @@ services:
       - ./results:/app/results
     environment:
       - SCENARIO=read_heavy
-      - MEMTABLE_SIZE_MB=48
+      - MEMTABLE_SIZE=4000
       - NUM_KEYS=50000
     profiles: ['experiments']
 

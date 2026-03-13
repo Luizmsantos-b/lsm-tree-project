@@ -3,8 +3,9 @@ package lsm.core;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import lsm.util.MetricsLogger;
 
 public class LSMTree {
@@ -104,22 +105,30 @@ public class LSMTree {
 
         System.out.println("[compact] Compactando L" + level + " → L" + (level + 1));
 
-        // Lê todos os dados do nível atual
-        // Chave mais nova sobrescreve a mais antiga
-        List<String[]> merged = new ArrayList<>();
+        // Lê todos os dados do nível atual E do próximo usando HashMap para deduplicação O(1)
+        // Lê nível N+1 primeiro (dados mais antigos), depois nível N (mais recentes sobrescrevem)
+        Map<String, String> mergedMap = new HashMap<>();
+        int nextLevel = level + 1;
+        for (SSTable sst : levels.get(nextLevel)) {
+            for (String[] entry : sst.readAll()) {
+                mergedMap.put(entry[0], entry[1]);
+            }
+        }
         for (SSTable sst : currentLevel) {
             for (String[] entry : sst.readAll()) {
-                // Remove entrada antiga da mesma chave se existir
-                merged.removeIf(e -> e[0].equals(entry[0]));
-                merged.add(entry);
+                // Dados do nível N (mais recentes) sobrescrevem os do N+1 (mais antigos)
+                mergedMap.put(entry[0], entry[1]);
             }
         }
 
-        // Ordena pelo chave antes de salvar
+        // Converte Map para List e ordena pelo chave
+        List<String[]> merged = new ArrayList<>();
+        for (Map.Entry<String, String> entry : mergedMap.entrySet()) {
+            merged.add(new String[] { entry.getKey(), entry.getValue() });
+        }
         merged.sort((a, b) -> a[0].compareTo(b[0]));
 
         // Cria nova SSTable no nível superior
-        int nextLevel = level + 1;
         long timestamp = System.nanoTime();
         String fileName = String.format("sst_compact_%06d.sst", compactionCount);
         SSTable compacted = new SSTable(
